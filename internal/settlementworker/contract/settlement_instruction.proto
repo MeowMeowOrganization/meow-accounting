@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package meow.exchange.accounting.v1alpha1;
+
+option go_package = "github.com/MeowMeowOrganization/meow-contracts/gen/go/meow/exchange/accounting/v1alpha1;accountingv1alpha1";
+
+// CEX16: immutable, trusted Kafka instruction; not a public API and not a
+// matching-engine output. The projector MUST freeze reservations, fee amounts,
+// fee collector, ownership and each order's terminal state as of this fill.
+// Publish keyed by the decimal source_market_id to a topic with fixed partition
+// count; preserve canonical execution ordering for each market.
+message TradeSettlementInstruction {
+  string trade_id = 1;
+  string market_id = 2; // business symbol, e.g. BTC-USDT
+  uint32 source_market_id = 3; // canonical matching market ID
+  uint64 market_sequence = 4;
+  uint64 event_ordinal = 5;
+  string maker_order_id = 6;
+  string taker_order_id = 7;
+  string maker_side = 8; // BUY or SELL
+  uint64 price_units = 9;
+  string buyer_account_id = 10;
+  string buyer_order_id = 11;
+  string buyer_reservation_id = 12;
+  string seller_account_id = 13;
+  string seller_order_id = 14;
+  string seller_reservation_id = 15;
+  string base_asset = 16;
+  string quote_asset = 17;
+  uint64 base_atoms = 18;
+  uint64 quote_atoms = 19;
+  uint64 buyer_fee_atoms = 20;
+  uint64 seller_fee_atoms = 21;
+  string fee_collector_account_id = 22;
+  bool close_buyer = 23;
+  bool close_seller = 24;
+}

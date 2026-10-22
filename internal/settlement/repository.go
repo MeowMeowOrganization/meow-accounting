@@ -30,6 +30,13 @@ func NewRepository(db *sql.DB) (*Repository, error) {
 // projection with independently validated order/account/reservation mapping.
 // A Kafka offset is not part of the financial identity.
 func (r *Repository) SettleTrade(ctx context.Context, request Request) (Result, error) {
+	return r.settle(ctx, request, nil)
+}
+
+// settle is the single CEX14/CEX16 financial transaction implementation.
+// A nil execution preserves the legacy CEX14 SettleTrade API. All new
+// matching-driven trade settlements must use SettleExecution instead.
+func (r *Repository) settle(ctx context.Context, request Request, execution *ExecutionInstruction) (Result, error) {
 	entries, err := request.Entries()
 	if err != nil {
 		return Result{}, err
@@ -55,6 +62,11 @@ func (r *Repository) SettleTrade(ctx context.Context, request Request) (Result, 
 		result, lookupErr := findPrevious(ctx, tx, request)
 		if lookupErr != nil {
 			return Result{}, lookupErr
+		}
+		if execution != nil {
+			if err := verifyPreviousExecution(ctx, tx, *execution); err != nil {
+				return Result{}, err
+			}
 		}
 		if err := tx.Commit(); err != nil {
 			return Result{}, fmt.Errorf("commit replay lookup: %w", err)
@@ -153,6 +165,14 @@ func (r *Repository) SettleTrade(ctx context.Context, request Request) (Result, 
 			strconv.FormatUint(request.Fees.SellerAtoms, 10))
 		if err != nil {
 			return Result{}, fmt.Errorf("write immutable fee audit receipt: %w", err)
+		}
+	}
+
+	// Source provenance is NOT an after-commit write: any uniqueness conflict
+	// rolls back holds, ledger, fees, and the operation claim together.
+	if execution != nil {
+		if err := insertExecution(ctx, tx, *execution); err != nil {
+			return Result{}, err
 		}
 	}
 

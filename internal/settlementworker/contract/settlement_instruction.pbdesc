@@ -1,0 +1,36 @@
+
+ë
+settlement_instruction.proto!meow.exchange.accounting.v1alpha1"±
+TradeSettlementInstruction
+trade_id (	RtradeId
+	market_id (	RmarketId(
+source_market_id (RsourceMarketId'
+market_sequence (RmarketSequence#
+event_ordinal (ReventOrdinal$
+maker_order_id (	RmakerOrderId$
+taker_order_id (	RtakerOrderId
+
+maker_side (	R	makerSide
+price_units	 (R
+priceUnits(
+buyer_account_id
+ (	RbuyerAccountId$
+buyer_order_id (	RbuyerOrderId0
+buyer_reservation_id (	RbuyerReservationId*
+seller_account_id (	RsellerAccountId&
+seller_order_id (	RsellerOrderId2
+seller_reservation_id (	RsellerReservationId
+
+base_asset (	R	baseAsset
+quote_asset (	R
+quoteAsset
+
+base_atoms (R	baseAtoms
+quote_atoms (R
+quoteAtoms&
+buyer_fee_atoms (RbuyerFeeAtoms(
+seller_fee_atoms (RsellerFeeAtoms7
+fee_collector_account_id (	RfeeCollectorAccountId
+close_buyer (R
+closeBuyer!
+close_seller (RcloseSellerBlZjgithub.com/MeowMeowOrganization/meow-contracts/gen/go/meow/exchange/accounting/v1alpha1;accountingv1alpha1bproto3

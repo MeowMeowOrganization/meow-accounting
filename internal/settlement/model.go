@@ -1,4 +1,5 @@
-// Package settlement implements CEX 14 exact-atom spot settlement and explicit fees.
+// Package settlement implements CEX 14 exact-atom trade settlement and fees,
+// extended with CEX 16 immutable execution provenance.
 // It contains no transport/Kafka/protobuf dependencies.
 package settlement
 
